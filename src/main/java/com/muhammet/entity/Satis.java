@@ -25,6 +25,19 @@ public class Satis extends BaseEntity{
         this.odemeTuru = odemeTuru;
     }
 
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("Satis{");
+        sb.append("musteriId='").append(musteriId).append('\'');
+        sb.append(", tarih=").append(tarih);
+        sb.append(", toplamTutar=").append(toplamTutar);
+        sb.append(", odenen=").append(odenen);
+        sb.append(", kalan=").append(kalan);
+        sb.append(", odemeTuru=").append(odemeTuru);
+        sb.append('}');
+        return sb.toString();
+    }
+
     public String getMusteriId() {
         return musteriId;
     }

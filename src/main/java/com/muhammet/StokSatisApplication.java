@@ -2,22 +2,24 @@
 package com.muhammet;
 
 
-import com.muhammet.entity.Marka;
-import com.muhammet.entity.Model;
-import com.muhammet.entity.StokTuru;
-import com.muhammet.entity.Urun;
-import com.muhammet.repository.MarkaRepository;
-import com.muhammet.repository.ModelRepository;
-import com.muhammet.repository.StokTuruRepository;
-import com.muhammet.repository.UrunRepository;
+import com.muhammet.entity.*;
+import com.muhammet.entity.enums.MusteriState;
+import com.muhammet.entity.enums.OdemeTuru;
+import com.muhammet.repository.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Random;
 
 public class StokSatisApplication {
     private static MarkaRepository markaRepository = new MarkaRepository();
     private static ModelRepository modelRepository  = new ModelRepository();
     private static UrunRepository urunRepository = new UrunRepository();
     private static StokTuruRepository stokTuruRepository = new StokTuruRepository();
+    private static MusteriRepository musteriRepository = new MusteriRepository();
+    private static SatisRepository satisRepository = new SatisRepository();
+    private static SatisDetayRepository satisDetayRepository = new SatisDetayRepository();
     public static void main(String[] args) {
         initial();
     }
@@ -70,6 +72,43 @@ public class StokSatisApplication {
                 new BigDecimal(72_894),18, 100,stokTurId,20,modelId));
         urunRepository.save(new Urun("Apple MacBook Pro M4 24GB 1TB SSD macOS 14\" Taşınabilir Bilgisayar Uzay Siyahı MCX04TU/A","",
                 new BigDecimal(91_994),18, 100,stokTurId,20,modelId));
+
+
+        musteriRepository.save(new Musteri("Ahmet TAŞ","Ankara","0 555 555 8887", "https://avatar/1",
+                "ahmet.tas","123456", MusteriState.AKTIF));
+        musteriRepository.save(new Musteri("Hakan BEYLER","Ankara","0 555 555 8887", "https://avatar/1",
+                "beyhakan","123456", MusteriState.AKTIF));
+        musteriRepository.save(new Musteri("Demet VARDAR","İzmir","0 987 555 8887", "https://avatar/1",
+                "demet98","123456", MusteriState.BEKLEMEDE));
+        musteriRepository.save(new Musteri("Tahsin KABA","Bursa","0 332 555 8887", "https://avatar/1",
+                "tahsin666","123456", MusteriState.BLOKE));
+
+
+        for (Musteri musteri : musteriRepository.findAll()) {
+            /**
+             * bir müşteriye bir-birden çok ürünün satış işlemi
+             * -------
+             * öncelikle müşteri listesini dolanıyoeruz ki müşteriye satış yapalım.
+             * müşterinin alacağı ürünleri tespit ediyorum.
+             * ürünlerin toplam tutarını hesaplıyorum.
+             * satış işlemini gerçekleştiriyorum. Müşteri Kim, Ne zaman satıldı? toplam fiyatı nekadar tuttu. ödeme türü
+             * satış işlemini kayıt ediyorum.
+             * satışa ait detay ürün bilgilerini kayıt ediyorum.
+             */
+            Random random = new Random();
+            Urun urun1 = urunRepository.findAll().get(random.nextInt(0,8));
+            Urun urun2 = urunRepository.findAll().get(random.nextInt(0,8));
+            BigDecimal toplamFiyat =  urun1.getFiyat().add(urun2.getFiyat());
+            Satis satis = new Satis(musteri.getUuid(), LocalDateTime.now(),toplamFiyat,new BigDecimal(0),
+                    toplamFiyat, OdemeTuru.NAKIT);
+
+            satisRepository.save(satis);
+
+            satisDetayRepository.save(new SatisDetay(urun1.getUuid(),satis.getUuid(),urun1.getFiyat(),1,urun1.getFiyat()));
+            satisDetayRepository.save(new SatisDetay(urun2.getUuid(),satis.getUuid(),urun2.getFiyat(),1,urun2.getFiyat()));
+
+        }
+
 
     }
 

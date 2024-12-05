@@ -26,4 +26,13 @@ public class SatisDetayRepository implements Repository<SatisDetay>{
     public List<SatisDetay> findAll() {
         return satisDetayList;
     }
+
+    public List<SatisDetay> findAllBySatisId(String satisId){
+        List<SatisDetay> resultList = new ArrayList<>();
+        for (SatisDetay satisDetay : satisDetayList) {
+            if(satisDetay.getSatisId().equals(satisId))
+                resultList.add(satisDetay);
+        }
+        return resultList;
+    }
 }

@@ -8,9 +8,9 @@ import com.muhammet.entity.enums.OdemeTuru;
 import com.muhammet.repository.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.Scanner;
 
 public class StokSatisApplication {
     private static MarkaRepository markaRepository = new MarkaRepository();
@@ -22,6 +22,39 @@ public class StokSatisApplication {
     private static SatisDetayRepository satisDetayRepository = new SatisDetayRepository();
     public static void main(String[] args) {
         initial();
+        /**
+         * Bir müşteriye ait satış raporlarını listeyelim.
+         */
+        System.out.println("""
+                ****    Müşteri Listesi   ****
+                """);
+        int sira =1;
+        for (Musteri musteri : musteriRepository.findAll()) {
+            System.out.println(sira++ + "- "+musteri.getUuid()+ " - " + musteri.getAd());
+        }
+        System.out.println("----------------------------");
+        System.out.print("Seçiniz....: ");
+        int musteriIndex = new Scanner(System.in).nextInt();
+        Musteri musteri = musteriRepository.findAll().get(musteriIndex-1);
+        /**
+         * DİKKAT!!!!!
+         * bir repo ile ilgili veri çekme işlemleri sadece ilgili repository ve service üzerinden yapılmalıdır.
+         * yani tüm bilgileri çekip filtrelemek ya da arama yapmak olabilecek en kötü senaryodur.
+         */
+//       for (Satis satis: satisRepository.findAll()) { // tüm satış listesini çekip dönüyoruz
+//          if(satis.getMusteriId().equalsIgnoreCase(musteri.getUuid())){
+//              System.out.println(musteri.getAd()+" isimli müşterinin "+ satis.getToplamTutar()+ " tutarıdır.");
+//          }
+//       }
+        for(Satis satis : satisRepository.findAllByMusteriId(musteri.getUuid())){
+            System.out.println(musteri.getAd()+" isimli müşterinin "+ satis.getToplamTutar()+ " tutarıdır.");
+            System.out.println("-------------------");
+            for(SatisDetay detay : satisDetayRepository.findAllBySatisId(satis.getUuid())){
+                System.out.println("Ürün id...: "+ urunRepository.getUrunAdiById(detay.getUrunId()));
+                System.out.println("birim fiyat...: "+ detay.getBirimFiyat());
+            }
+            System.out.println("---------------------------------");
+        }
     }
 
 

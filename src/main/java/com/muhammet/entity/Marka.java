@@ -12,6 +12,15 @@ public class Marka extends BaseEntity{
         this.aciklama = aciklama;
     }
 
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("Marka{");
+        sb.append("markaAdi='").append(markaAdi).append('\'');
+        sb.append(", aciklama='").append(aciklama).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
+
     public String getMarkaAdi() {
         return markaAdi;
     }

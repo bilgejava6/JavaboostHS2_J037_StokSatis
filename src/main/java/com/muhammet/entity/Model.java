@@ -12,6 +12,15 @@ public class Model extends BaseEntity{
         this.modelAd = modelAd;
     }
 
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("Model{");
+        sb.append("markaId='").append(markaId).append('\'');
+        sb.append(", modelAd='").append(modelAd).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
+
     public String getMarkaId() {
         return markaId;
     }
